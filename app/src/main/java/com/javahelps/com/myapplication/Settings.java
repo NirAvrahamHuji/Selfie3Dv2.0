@@ -26,6 +26,5 @@ class Settings {
     static final int QUERIES  = 64;
 
     static final int DESCRIPTOR_WANTED_SIZE = 128;
-
     static final int K_NEAREST = 1;
 }
