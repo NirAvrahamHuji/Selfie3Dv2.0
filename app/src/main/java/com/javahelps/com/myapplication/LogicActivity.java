@@ -148,40 +148,6 @@ public class LogicActivity extends AppCompatActivity {
         }
     }
 
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_logic);
-//        databaseAccess = DatabaseAccess.getInstance(this);
-//        databaseAccess.open();
-//        // Connect to image view.
-//        imgView = (ImageView) this.findViewById(R.id.faceImage);
-//        //Open image.
-//
-//        byte[] bytes = getIntent().getByteArrayExtra("Face");
-//        orgBmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//
-////        InputStream stream = getResources().openRawResource( R.raw.face );
-////        orgBmp = BitmapFactory.decodeStream(stream);
-//
-//        imgMat = getMatFromBitmap(orgBmp);
-//
-//        inputHandler = new inputHandler();
-//
-//        // split the input img into patches
-//        HashMap<Integer, HashMap<Integer, Mat>> img_descriptors = inputHandler.splitToPatches(imgMat);
-//
-//        depth_patches = processDescriptors(img_descriptors);
-//
-//        depth = createDepthMap(depth_patches);
-//
-//        depthBmp = Utils2D.mat2bmp(depth);
-//
-//        imgView.setImageBitmap(depthBmp);
-//
-//        databaseAccess.close();
-//    }
     public void optimize_output(View view) {
         Imgproc.cvtColor(depth, depth, Imgproc.COLOR_GRAY2BGR, 3);
         Imgproc.pyrMeanShiftFiltering(depth, depth, 4, 4);
@@ -226,12 +192,6 @@ public class LogicActivity extends AppCompatActivity {
                 // run on all the descriptor and save the one with the smallest distance
                 for (Descriptor db_desc:env_descs) {
                     double dis_res = db_desc.distanceFrom(input_descriptor);
-
-                    // to get the best match
-                    // if (dis_res < min_dist) {
-                    //    min_desc = db_desc;
-                    //    min_dist = dis_res;
-                    //}
 
                     k_nearest.put(db_desc, dis_res);
                 }
@@ -308,7 +268,7 @@ public class LogicActivity extends AppCompatActivity {
         Integer upper_row = row + Settings.ENV_SIZE + Settings.PATCH_SIZE;
         Integer lower_row = row - Settings.ENV_SIZE;
 
-        String query = String.format("select * from descriptors where col > %d and col < %d and row > %d and row < %d;", lower_col, upper_col, lower_row, upper_row);
+        String query = String.format("select * from descriptors where col >= %d and col < %d and row >= %d and row < %d;", lower_col, upper_col, lower_row, upper_row);
         List<Descriptor> query_res = databaseAccess.exeDescriptorsQuery(query);
 
         return query_res;
