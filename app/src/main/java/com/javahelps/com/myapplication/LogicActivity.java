@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.Size;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -35,6 +37,9 @@ import java.util.List;
 
 import static org.opencv.core.Core.add;
 import static org.opencv.core.Core.multiply;
+import static org.opencv.imgproc.Imgproc.MORPH_CLOSE;
+import static org.opencv.imgproc.Imgproc.MORPH_ELLIPSE;
+import static org.opencv.imgproc.Imgproc.getStructuringElement;
 
 public class LogicActivity extends AppCompatActivity {
 
@@ -149,12 +154,29 @@ public class LogicActivity extends AppCompatActivity {
     }
 
     public void optimize_output(View view) {
+
+        // Pyramid Mean Shift Filtering:
         Imgproc.cvtColor(depth, depth, Imgproc.COLOR_GRAY2BGR, 3);
         Imgproc.pyrMeanShiftFiltering(depth, depth, 4, 4);
         Imgproc.cvtColor(depth, depth, Imgproc.COLOR_BGR2GRAY);
+
         Bitmap depthbmp = Utils2D.mat2bmp(depth);
         imgView.setImageBitmap(depthbmp);
     }
+
+    public void close(View view) {
+        // Morphing settings
+        int morph_size = 13;
+
+        // Closing morphology:
+        Mat element = getStructuringElement( MORPH_ELLIPSE, new Size( 2*morph_size + 1, 2*morph_size+1 ), new Point( morph_size, morph_size ) );
+        Imgproc.morphologyEx( depth, depth, MORPH_CLOSE, element );
+
+        Bitmap depthbmp = Utils2D.mat2bmp(depth);
+        imgView.setImageBitmap(depthbmp);
+    }
+
+
 
     public void showDepthPatch(View view){
         DepthPatch d = depth_patches.get(i);
