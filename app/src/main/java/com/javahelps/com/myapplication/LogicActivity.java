@@ -48,7 +48,6 @@ public class LogicActivity extends AppCompatActivity {
     Bitmap depthBmp;
     Bitmap orgBmp;
     int i = 0;
-    Imgproc ip;
     Mat depth;
 
     //A ProgressDialog object
@@ -184,9 +183,9 @@ public class LogicActivity extends AppCompatActivity {
 //        databaseAccess.close();
 //    }
     public void optimize_output(View view) {
-        ip = new Imgproc();
-//        depth.convertTo(depth,CvType.CV_8UC1);
-        ip.pyrMeanShiftFiltering(depth, depth, 4, 4);
+        Imgproc.cvtColor(depth, depth, Imgproc.COLOR_GRAY2BGR, 3);
+        Imgproc.pyrMeanShiftFiltering(depth, depth, 4, 4);
+        Imgproc.cvtColor(depth, depth, Imgproc.COLOR_BGR2GRAY);
         Bitmap depthbmp = Utils2D.mat2bmp(depth);
         imgView.setImageBitmap(depthbmp);
     }
