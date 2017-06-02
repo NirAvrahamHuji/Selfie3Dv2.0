@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("nonfree");
     }
 
+    public static final int INPUT_IMG = R.raw.face22;
     static final int RESULT_LOAD_IMAGE = 1;
     private static final String TAG = "MainActivity";
 
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void imageFromDataBase(View view){
-        InputStream stream = getResources().openRawResource( R.raw.face8 );
+        InputStream stream = getResources().openRawResource(INPUT_IMG);
         mImageBitmap = BitmapFactory.decodeStream(stream);
         rotateButton.setVisibility(View.VISIBLE);
         mImageView.setImageBitmap(mImageBitmap);
