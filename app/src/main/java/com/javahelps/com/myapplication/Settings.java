@@ -8,8 +8,8 @@ class Settings {
     static final int ENV_SIZE = 0;
     static final int IMAGE_CVTYPE = CV_8UC1;
 
-    static final int WIDTH_SIZE = 256;
-    static final int HEIGHT_SIZE = 256;
+    static final int WIDTH_SIZE = 128;
+    static final int HEIGHT_SIZE = 128;
     static final int ORIG_HEIGHT_SIZE = 938;
     static final int ORIG_WIDTH_SIZE = 938;
     static final float PATCH_SIZE_FLOAT = 32f;

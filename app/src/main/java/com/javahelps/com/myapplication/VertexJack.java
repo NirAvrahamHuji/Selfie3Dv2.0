@@ -18,6 +18,8 @@ import java.net.ContentHandler;
 
 
 class VertexJack {
+    public static final int COLORS_ARRAY_SIZE = 28000;
+    public static final int VERTICES_SIZE = COLORS_ARRAY_SIZE * 12;
     private Context context;
     private Mat imgMat;
     private Bitmap imgOrg;
@@ -56,9 +58,9 @@ class VertexJack {
         int row = 0;
         int col = 0;
 
-        this.colors = new float[25000][4];
-        float[] vertices = new float[300000];
-        for(int i=0; i < 300000; i+=12){
+        this.colors = new float[COLORS_ARRAY_SIZE][4];
+        float[] vertices = new float[VERTICES_SIZE];
+        for(int i=0; i < VERTICES_SIZE; i+=12){
             int color =imgOrg.getPixel(col,row);
 //            Log.e(TAG,":color-"+color);
             this.colors[i/12][0] = (float)Color.red(color)/255;
