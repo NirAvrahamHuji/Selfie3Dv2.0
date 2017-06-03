@@ -88,7 +88,7 @@ public class LogicActivity extends AppCompatActivity {
             //Set the progress dialog to display a horizontal progress bar
 
             //Set the dialog message to 'Loading application View, please wait...'
-            progressDialog.setMessage("Creating Depth map...");
+            progressDialog.setMessage("Creating Depth Map...");
             //This dialog can't be canceled by pressing the back key
             progressDialog.setCancelable(false);
             //This dialog isn't indeterminate

@@ -12,6 +12,8 @@ import android.opengl.GLU;
  */
 class MyGLRenderer implements GLSurfaceView.Renderer {
 
+    private static final int MIN_ANGLE = -40;
+    private static final int MAX_ANGLE = 40;
     private Cube cube;          // (NEW)
     private Bitmap depthImage;
 
@@ -79,7 +81,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
         cube.draw(gl);
         // Update the rotational angle after each refresh
 
-        if(angleCube<-85||angleCube>85){
+        if(angleCube < MIN_ANGLE || angleCube > MAX_ANGLE){
             speedCube = speedCube*(-1.0f);
         }
 
