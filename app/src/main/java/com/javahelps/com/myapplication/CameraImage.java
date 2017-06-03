@@ -1,7 +1,5 @@
 package com.javahelps.com.myapplication;
 
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,13 +18,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+class CameraImage {
 
-public class CameraImage {
+    private String mCurrentPhotoPath;
+    private Context context;
 
-    String mCurrentPhotoPath;
-    Context context;
-
-    public CameraImage(Context context) {
+    CameraImage(Context context) {
         this.context = context;
     }
 
@@ -47,9 +44,9 @@ public class CameraImage {
         return image;
     }
 
-    static public final int REQUEST_TAKE_PHOTO = 2;
+    static final int REQUEST_TAKE_PHOTO = 2;
 
-    public void dispatchTakePictureIntent() {
+    void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(this.context.getPackageManager()) != null) {
@@ -72,7 +69,7 @@ public class CameraImage {
 
 
 
-    public Bitmap setPic(ImageView mImageView) {
+    Bitmap setPic(ImageView mImageView) {
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
@@ -96,7 +93,7 @@ public class CameraImage {
 
     }
 
-    public Bitmap rotateImage(Bitmap bitmapOrg){
+    Bitmap rotateImage(Bitmap bitmapOrg){
         Matrix matrix = new Matrix();
 
         matrix.postRotate(90);
