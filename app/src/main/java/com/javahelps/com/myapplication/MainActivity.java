@@ -2,6 +2,8 @@ package com.javahelps.com.myapplication;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
@@ -33,12 +35,16 @@ import android.widget.Toast;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int NOSE_TYPE = 6;
 
     static {
         System.loadLibrary("opencv_java");
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void faceDetection(View view){
         SparseArray<Face> mFaces;
-        FaceDetector detector = new FaceDetector.Builder(this).setTrackingEnabled(true).setLandmarkType(FaceDetector.ALL_LANDMARKS).setMode(FaceDetector.ACCURATE_MODE).build();
+        FaceDetector detector = new FaceDetector.Builder(this).setTrackingEnabled(true).setLandmarkType(FaceDetector.ALL_LANDMARKS).setMode(FaceDetector.ALL_LANDMARKS).build();
         if (!detector.isOperational()) {
             Log.i(TAG,"FaceDetector Failed");
         } else {
@@ -115,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             if(mFaces.size() != 0){
                 Rectangle rect = drawFaceBorder(mFaces);
                 Log.d(TAG,""+rect.x+" "+rect.y+" " + (rect.width+rect.x)+  " " + (rect.height+rect.y) +" mBitMapWidth:" +mImageBitmap.getWidth()+ " mBitMapHeight:" + mImageBitmap.getHeight());
-                mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width,mImageBitmap.getWidth()), Math.min(rect.height,mImageBitmap.getHeight()));
+                mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
             }else{
@@ -156,7 +162,27 @@ public class MainActivity extends AppCompatActivity {
 
         Rectangle rect = new Rectangle();
         Face face = mFaces.valueAt(0);
-        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
+        List<Landmark> landmarks = face.getLandmarks();
+
+        for (Landmark landmark:landmarks) {
+            int type = landmark.getType();
+            if (type == NOSE_TYPE)
+            {
+                float nose_x = landmark.getPosition().x;
+                float nose_y = landmark.getPosition().y;
+                System.out.print('s');
+            }
+        }
+
+        int x_chnage = (int) face.getWidth() / 2;
+        int y_change = (int) (face.getHeight() * 27 / 65);
+        int newHight = (int) (face.getHeight() * 100 / 65);
+
+        rect.setBounds(Math.max((int)face.getPosition().x - x_chnage, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHight);
+
+//        original
+//        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
+
 
         return rect;
 
