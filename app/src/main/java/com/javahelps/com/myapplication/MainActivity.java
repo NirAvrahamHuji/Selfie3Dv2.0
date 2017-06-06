@@ -125,12 +125,18 @@ public class MainActivity extends AppCompatActivity {
             Frame frame = new Frame.Builder().setBitmap(mImageBitmap).build();
             mFaces = detector.detect(frame);
             if(mFaces.size() != 0){
+                Settings.INPUT_IMG_HEIGHT = mImageBitmap.getHeight();
+                Settings.INPUT_IMG_WIDTH = mImageBitmap.getWidth();
+
                 Rectangle rect = drawFaceBorder(mFaces);
                 Log.d(TAG,""+rect.x+" "+rect.y+" " + (rect.width+rect.x)+  " " + (rect.height+rect.y) +" mBitMapWidth:" +mImageBitmap.getWidth()+ " mBitMapHeight:" + mImageBitmap.getHeight());
 
                 Settings.SCALE_X = (float)Math.min(rect.width, mImageBitmap.getWidth() - 1) / Settings.ORIG_WIDTH_SIZE;
                 Settings.SCALE_Y = (float)Math.min(rect.height, mImageBitmap.getHeight() - 1) / Settings.ORIG_HEIGHT_SIZE;
                 mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
+
+                Settings.CROP_WIDTH = Math.min(rect.width, mImageBitmap.getWidth() - 1);
+                Settings.CROP_HEIGHT = Math.min(rect.height, mImageBitmap.getHeight() - 1);
 
                 // change it to be a Mat object
                 Size sz = new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE);
@@ -140,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
                 Mat align_mat = alignImages(input_img_mat);
 
                 // change back to be Bitmap
-                Bitmap b = Bitmap.createBitmap(align_mat.width(), align_mat.height(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(input_img_mat,b);
-                mImageBitmap = b;
+                    Bitmap b = Bitmap.createBitmap(align_mat.width(), align_mat.height(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(input_img_mat,b);
+                    mImageBitmap = b;
 
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
@@ -199,6 +205,9 @@ public class MainActivity extends AppCompatActivity {
         int y_change = (int) (face.getHeight() * 27 / 65);
         int newHeight = (int) (face.getHeight() * 100 / 60.767);
 
+        Settings.FACE_INPUT_IMG_WIDTH = face.getWidth();
+        Settings.FACE_INPUT_IMG_HEIGHT = face.getHeight();
+
         Settings.X_NOSE = Settings.X_NOSE - Math.max((int)face.getPosition().x - x_change, 0);
         Settings.Y_NOSE = Settings.Y_NOSE -  Math.max((int)face.getPosition().y - y_change, 0);
         rect.setBounds(Math.max((int)face.getPosition().x - x_change, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHeight);
@@ -227,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Imgproc.warpAffine(input_img_mat,input_img_mat,matObject,new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE));
-        input_img_mat.convertTo(input_img_mat, CvType.CV_8UC3);
+//        input_img_mat.convertTo(input_img_mat, CvType.CV_8UC3);
 
         System.out.println("FINISHED");
 
@@ -237,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     private Mat getMatFromBitmap(Bitmap bmp){
         Mat sourceImage = new Mat(bmp.getWidth(), bmp.getHeight(), CvType.CV_8UC3);
         Utils.bitmapToMat(bmp, sourceImage);
+//        Imgproc.cvtColor(sourceImage, sourceImage,Imgproc.COLOR_RGB2GRAY);
 
         return sourceImage;
     }

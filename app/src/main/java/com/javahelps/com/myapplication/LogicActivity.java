@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -20,7 +19,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Size;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,10 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Bundle;
 
 import java.util.List;
 
@@ -127,10 +123,6 @@ public class LogicActivity extends AppCompatActivity {
                 depth_patches = processDescriptors(img_descriptors);
 
                 depth = createDepthMap(depth_patches);
-
-
-
-
             }
 
         return null;
@@ -150,15 +142,83 @@ public class LogicActivity extends AppCompatActivity {
         {
             //close the progress dialog
             progressDialog.dismiss();
+
             //initialize the View
             setContentView(R.layout.activity_logic);
             imgView = (ImageView) findViewById(R.id.faceImage);
             depthBmp = Utils2D.mat2bmp(depth);
-            findDepthNose(new Rect((int)Settings.IMAGE_SIZE.width/3,(int)Settings.IMAGE_SIZE.height/3, (int)Settings.IMAGE_SIZE.height/3,(int)Settings.IMAGE_SIZE.height/3));
-            alignImages();
+
+            // find the face width in the 1/3 middle section of the depth image
+            int faceWidth = findFaceWidthDepth(new Rect(0, (int) Settings.IMAGE_SIZE.height / 3, depth.width(), (int) Settings.IMAGE_SIZE.height / 3));
+            int faceHeight = findFaceHeightDepth(new Rect((int)Settings.IMAGE_SIZE.width / 3, 0, (int)Settings.IMAGE_SIZE.width / 3, depth.height()));
+
+            // find the nose to match the move the images to be with the same center
+            findDepthNose(new Rect((int)Settings.IMAGE_SIZE.width / 3,(int)Settings.IMAGE_SIZE.height / 3, (int)Settings.IMAGE_SIZE.height / 3,(int)Settings.IMAGE_SIZE.height / 3));
+
+            alignImages(faceWidth, faceHeight);
+
             depthBmp = Utils2D.mat2bmp(depth);
             imgView.setImageBitmap(depthBmp);
+//            imgView.setImageBitmap(orgBmp);
             databaseAccess.close();
+        }
+    }
+
+    private int findFaceHeightDepth(Rect rect) {
+        int heightMaxValue = Integer.MIN_VALUE;
+        boolean exitLoop = false;
+
+        for(int col = rect.x; col < rect.x + rect.width; col++){
+            if (exitLoop) {
+                break;
+            }
+
+            for(int row = rect.y; row < rect.y + rect.height; row++){
+
+                // check if there is value in the depth image
+                if(0 != depthBmp.getPixel(col, row)){
+                    heightMaxValue = col;
+                    exitLoop = true;
+                    break;
+                }
+            }
+        }
+
+        return depthBmp.getHeight() - heightMaxValue;
+    }
+
+    private int findFaceWidthDepth(Rect rect) {
+        int rightMostValue = Integer.MIN_VALUE;
+        int leftMostValue = Integer.MAX_VALUE;
+
+        for(int col = rect.x; col < rect.x + rect.width; col++){
+            for(int row = rect.y; row < rect.y + rect.height; row++){
+
+                // check if there is value in the depth image
+                if(0 != depthBmp.getPixel(col, row)){
+                    if (col < leftMostValue) {
+                        leftMostValue = col;
+                    }
+                    if (col > rightMostValue) {
+                        rightMostValue = col;
+                    }
+                }
+            }
+        }
+
+        return rightMostValue - leftMostValue;
+    }
+
+    public void findDepthNose(Rect area){
+        int maxVal = Integer.MIN_VALUE;
+        for(int col = area.x; col < area.x + area.width; col++){
+            for(int row = area.y; row < area.y + area.height; row++){
+                if(maxVal < depthBmp.getPixel(col,row)){
+                    maxVal =  depthBmp.getPixel(col,row);
+                    DEPTH_ROW_NOSE = row;
+                    DEPTH_COL_NOSE = col;
+                }
+            }
         }
     }
 
@@ -184,8 +244,6 @@ public class LogicActivity extends AppCompatActivity {
         Bitmap depthbmp = Utils2D.mat2bmp(depth);
         imgView.setImageBitmap(depthbmp);
     }
-
-
 
     public void showDepthPatch(View view){
         DepthPatch d = depth_patches.get(i);
@@ -338,35 +396,46 @@ public class LogicActivity extends AppCompatActivity {
         return res_list;
     }
 
-    public void findDepthNose(Rect area){
+    public void alignImages(int faceWidth, int faceHeight){
+//        // get the new sizes of the input face
+//        float inputFaceWidth = Settings.FACE_INPUT_IMG_WIDTH * Settings.ORIG_WIDTH_SIZE / Settings.CROP_WIDTH;
+//        float inputFaceHeight = Settings.FACE_INPUT_IMG_HEIGHT * Settings.ORIG_HEIGHT_SIZE / Settings.CROP_HEIGHT;
+//
+//        // get the scaling parameters from the input img to the depth
+//        float scaleFactorWidth = ((float) faceWidth / Settings.WIDTH_SIZE) * ((float) Settings.ORIG_WIDTH_SIZE / inputFaceWidth);
+//        float scaleFactorHeight = ((float) faceHeight / Settings.HEIGHT_SIZE) * ((float) Settings.ORIG_HEIGHT_SIZE / inputFaceHeight);
+//
+//        // create a matrix with the scaling factors in each axis
+//        double[][] intArrayFace = new double[][]{{scaleFactorWidth, 0d, 0d}, {0d, scaleFactorHeight, 0d}};
+//
+//        Mat matObject = new Mat(2,3, CvType.CV_32F);
+//        for(int row = 0; row < 2; row++){
+//            for(int col = 0; col < 3; col++)
+//                matObject.put(row, col, intArrayFace[row][col]);
+//        }
+//
+//        // change the image according the the scaling matrix
+//        Mat inputImg = getMatFromBitmap(orgBmp);
+//        Imgproc.warpAffine(inputImg, inputImg, matObject, new Size(938,938));
+//
+//        Bitmap temp_bitmap = Bitmap.createBitmap(inputImg.width(), inputImg.height(), Bitmap.Config.ARGB_8888);
+//        Utils.matToBitmap(inputImg, temp_bitmap);
+//        orgBmp = temp_bitmap;
+//
+//        float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width) * scaleFactorWidth;
+//        float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height) * scaleFactorHeight;
 
-        int maxVal = Integer.MIN_VALUE;
-        for(int col = area.x; col < area.x + area.width; col++){
-            for(int row = area.y; row < area.y + area.height; row++){
-                if(maxVal < depthBmp.getPixel(col,row)){
-                    maxVal =  depthBmp.getPixel(col,row);
-                    DEPTH_ROW_NOSE = row;
-                    DEPTH_COL_NOSE = col;
-                }
-
-            }
-        }
-
-    }
-
-    public void alignImages(){
-
-        float scale_x = (float) (Settings.ORIG_WIDTH_SIZE/Settings.IMAGE_SIZE.width);
-        float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE/Settings.IMAGE_SIZE.height);
-
+        float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
+        float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 
         int x_translate = (int) (Settings.X_NOSE / scale_x  - DEPTH_COL_NOSE);
         int y_translate = (int) (Settings.Y_NOSE / scale_y  - DEPTH_ROW_NOSE);
 
-        double[][] intArray = new double[][]{{1d,0d,(double)x_translate},{0d,1d,(double)y_translate}};
-        Mat matObject = new Mat(2,3,CvType.CV_32F);
-        for(int row=0;row<2;row++){
-            for(int col=0;col<3;col++)
+        double[][] intArray = new double[][]{{1d, 0d,(double)x_translate}, {0d, 1d,(double)y_translate}};
+
+        Mat matObject = new Mat(2,3, CvType.CV_32F);
+        for(int row = 0; row < 2; row++){
+            for(int col = 0; col < 3; col++)
                 matObject.put(row, col, intArray[row][col]);
         }
 

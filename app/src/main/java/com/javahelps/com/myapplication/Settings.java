@@ -8,20 +8,34 @@ class Settings {
     static final int ENV_SIZE = 0;
     static final int IMAGE_CVTYPE = CV_8UC1;
 
+    // the size we resize to input image to
     static final int WIDTH_SIZE = 128;
     static final int HEIGHT_SIZE = 128;
+
+    // db images original size
     static final int ORIG_HEIGHT_SIZE = 938;
     static final int ORIG_WIDTH_SIZE = 938;
+
     static final float PATCH_SIZE_FLOAT = 32f;
     static final int PATCH_SIZE = (int) PATCH_SIZE_FLOAT;
 
-    static final Size IMAGE_SIZE = new Size(WIDTH_SIZE, HEIGHT_SIZE);
+    static int CROP_WIDTH;
+    static int CROP_HEIGHT;
 
+    // the input image original sizes
+    static int INPUT_IMG_WIDTH;
+    static int INPUT_IMG_HEIGHT;
+
+    // the face original width and height
+    static float FACE_INPUT_IMG_WIDTH;
+    static float FACE_INPUT_IMG_HEIGHT;
+
+    static final Size IMAGE_SIZE = new Size(WIDTH_SIZE, HEIGHT_SIZE);
     // TODO: when we retrieve the overlap return to < instead of <=
     private static final int STEP_OVERLAP = 1;
     static final int OVERLAP_SIZE = PATCH_SIZE / STEP_OVERLAP;
-    static final int QUERIES  = 64;
 
+    static final int QUERIES  = 64;
     static final int DESCRIPTOR_WANTED_SIZE = 128;
     static final int K_NEAREST = 1;
 
