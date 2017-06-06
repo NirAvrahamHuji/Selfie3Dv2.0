@@ -132,15 +132,21 @@ public class MainActivity extends AppCompatActivity {
                 Settings.SCALE_Y = (float)Math.min(rect.height, mImageBitmap.getHeight() - 1) / Settings.ORIG_HEIGHT_SIZE;
                 mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
 
+                // change it to be a Mat object
                 Size sz = new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE);
                 Mat input_img_mat = getMatFromBitmap(mImageBitmap);
                 Imgproc.resize(input_img_mat, input_img_mat, sz);
 
-                alignImages(input_img_mat);
+                Mat align_mat = alignImages(input_img_mat);
+
+                // change back to be Bitmap
+                Bitmap b = Bitmap.createBitmap(align_mat.width(), align_mat.height(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(input_img_mat,b);
+                mImageBitmap = b;
 
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
-            }else{
+            } else {
                 Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find face", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -175,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Rectangle drawFaceBorder(SparseArray<Face> mFaces) {
-
         Rectangle rect = new Rectangle();
         Face face = mFaces.valueAt(0);
         List<Landmark> landmarks = face.getLandmarks();
@@ -201,12 +206,11 @@ public class MainActivity extends AppCompatActivity {
 //        original
 //        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
 
-
         return rect;
 
     }
 
-    public void alignImages(Mat input_img_mat){
+    public Mat alignImages(Mat input_img_mat){
         Settings.X_NOSE = (int) (Settings.X_NOSE / Settings.SCALE_X);
         Settings.Y_NOSE = (int) (Settings.Y_NOSE / Settings.SCALE_Y);
         int x_translate = Settings.X_NOSE  - NORMALIZE_NOSE_X;
@@ -223,16 +227,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Imgproc.warpAffine(input_img_mat,input_img_mat,matObject,new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE));
-        Bitmap b = Bitmap.createBitmap(input_img_mat.width(), input_img_mat.height(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(input_img_mat,b);
-        mImageBitmap = b;
+        input_img_mat.convertTo(input_img_mat, CvType.CV_8UC3);
+
         System.out.println("FINISHED");
+
+        return input_img_mat;
     }
 
     private Mat getMatFromBitmap(Bitmap bmp){
-        Mat sourceImage = new Mat(bmp.getWidth(), bmp.getHeight(), CvType.CV_8UC1);
+        Mat sourceImage = new Mat(bmp.getWidth(), bmp.getHeight(), CvType.CV_8UC3);
         Utils.bitmapToMat(bmp, sourceImage);
-        Imgproc.cvtColor(sourceImage, sourceImage, Imgproc.COLOR_RGB2GRAY);
+
         return sourceImage;
     }
 }
