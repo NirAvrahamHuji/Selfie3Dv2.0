@@ -5,13 +5,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.provider.*;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
@@ -22,7 +26,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,6 +48,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final int NOSE_TYPE = 6;
+    private static final int NORMALIZE_NOSE_X = 450;
+    private static final int NORMALIZE_NOSE_Y = 620;
+
 
     static {
         System.loadLibrary("opencv_java");
@@ -121,7 +127,17 @@ public class MainActivity extends AppCompatActivity {
             if(mFaces.size() != 0){
                 Rectangle rect = drawFaceBorder(mFaces);
                 Log.d(TAG,""+rect.x+" "+rect.y+" " + (rect.width+rect.x)+  " " + (rect.height+rect.y) +" mBitMapWidth:" +mImageBitmap.getWidth()+ " mBitMapHeight:" + mImageBitmap.getHeight());
+
+                Settings.SCALE_X = (float)Math.min(rect.width, mImageBitmap.getWidth() - 1) / Settings.ORIG_WIDTH_SIZE;
+                Settings.SCALE_Y = (float)Math.min(rect.height, mImageBitmap.getHeight() - 1) / Settings.ORIG_HEIGHT_SIZE;
                 mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
+
+                Size sz = new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE);
+                Mat input_img_mat = getMatFromBitmap(mImageBitmap);
+                Imgproc.resize(input_img_mat, input_img_mat, sz);
+
+                alignImages(input_img_mat);
+
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
             }else{
@@ -163,22 +179,24 @@ public class MainActivity extends AppCompatActivity {
         Rectangle rect = new Rectangle();
         Face face = mFaces.valueAt(0);
         List<Landmark> landmarks = face.getLandmarks();
-
         for (Landmark landmark:landmarks) {
             int type = landmark.getType();
             if (type == NOSE_TYPE)
             {
                 float nose_x = landmark.getPosition().x;
                 float nose_y = landmark.getPosition().y;
-                System.out.print('s');
+                Settings.setNosePosition(nose_x,nose_y);
+                System.out.println("NosePosition:  " + nose_x + "," +nose_y );
             }
         }
 
-        int x_chnage = (int) face.getWidth() / 2;
+        int x_change = (int) face.getWidth() / 2;
         int y_change = (int) (face.getHeight() * 27 / 65);
-        int newHight = (int) (face.getHeight() * 100 / 65);
+        int newHeight = (int) (face.getHeight() * 100 / 60.767);
 
-        rect.setBounds(Math.max((int)face.getPosition().x - x_chnage, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHight);
+        Settings.X_NOSE = Settings.X_NOSE - Math.max((int)face.getPosition().x - x_change, 0);
+        Settings.Y_NOSE = Settings.Y_NOSE -  Math.max((int)face.getPosition().y - y_change, 0);
+        rect.setBounds(Math.max((int)face.getPosition().x - x_change, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHeight);
 
 //        original
 //        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
@@ -186,6 +204,36 @@ public class MainActivity extends AppCompatActivity {
 
         return rect;
 
+    }
+
+    public void alignImages(Mat input_img_mat){
+        Settings.X_NOSE = (int) (Settings.X_NOSE / Settings.SCALE_X);
+        Settings.Y_NOSE = (int) (Settings.Y_NOSE / Settings.SCALE_Y);
+        int x_translate = Settings.X_NOSE  - NORMALIZE_NOSE_X;
+        int y_translate = Settings.Y_NOSE  - NORMALIZE_NOSE_Y;
+
+        Settings.X_NOSE += x_translate;
+        Settings.Y_NOSE += y_translate;
+
+        double[][] intArray = new double[][]{{1d,0d,(double)x_translate},{0d,1d,(double)y_translate}};
+        Mat matObject = new Mat(2,3,CvType.CV_32F);
+        for(int row=0;row<2;row++){
+            for(int col=0;col<3;col++)
+                matObject.put(row, col, intArray[row][col]);
+        }
+
+        Imgproc.warpAffine(input_img_mat,input_img_mat,matObject,new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE));
+        Bitmap b = Bitmap.createBitmap(input_img_mat.width(), input_img_mat.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(input_img_mat,b);
+        mImageBitmap = b;
+        System.out.println("FINISHED");
+    }
+
+    private Mat getMatFromBitmap(Bitmap bmp){
+        Mat sourceImage = new Mat(bmp.getWidth(), bmp.getHeight(), CvType.CV_8UC1);
+        Utils.bitmapToMat(bmp, sourceImage);
+        Imgproc.cvtColor(sourceImage, sourceImage, Imgproc.COLOR_RGB2GRAY);
+        return sourceImage;
     }
 }
 

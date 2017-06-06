@@ -24,6 +24,7 @@ class inputHandler {
         // create the required size
         Size sz = new Size(Settings.WIDTH_SIZE, Settings.HEIGHT_SIZE);
 
+
         // resize and convert the colors of the img
         Imgproc.resize(imgMat, imgMat, sz);
         Imgproc.cvtColor(imgMat, forSIFTim, Imgproc.COLOR_RGB2GRAY);

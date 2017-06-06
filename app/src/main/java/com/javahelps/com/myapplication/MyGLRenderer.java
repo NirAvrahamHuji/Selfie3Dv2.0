@@ -18,7 +18,7 @@ class MyGLRenderer implements GLSurfaceView.Renderer {
     private Bitmap depthImage;
 
     private static float angleCube = 0;    // Rotational angle in degree for cube (NEW)
-    private static float speedCube = -5.0f;   // Rotational speed for cube (NEW)
+    private static float speedCube = -15.0f;   // Rotational speed for cube (NEW)
 
     // Constructor
     MyGLRenderer(Context context, Bitmap depthImage , Bitmap orgImage) {

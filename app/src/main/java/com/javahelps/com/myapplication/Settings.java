@@ -18,10 +18,20 @@ class Settings {
     static final Size IMAGE_SIZE = new Size(WIDTH_SIZE, HEIGHT_SIZE);
 
     // TODO: when we retrieve the overlap return to < instead of <=
-    static final int STEP_OVERLAP = 1;
+    private static final int STEP_OVERLAP = 1;
     static final int OVERLAP_SIZE = PATCH_SIZE / STEP_OVERLAP;
     static final int QUERIES  = 64;
 
     static final int DESCRIPTOR_WANTED_SIZE = 128;
     static final int K_NEAREST = 1;
+
+    static int X_NOSE = 0;
+    static int Y_NOSE = 0;
+    static float SCALE_X = 0.0f;
+    static float SCALE_Y = 0.0f;
+
+    static void setNosePosition(float x_nose,float y_nose){
+        X_NOSE = (int) x_nose;
+        Y_NOSE = (int) y_nose;
+    }
 }

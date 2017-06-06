@@ -17,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 class Cube {
     private FloatBuffer vertexBuffer;  // Buffer for vertex-array
-    private int numFaces = 25000;
+    private int numFaces;
 
     private float[] vertices;
     private float[][] colors;
@@ -27,12 +27,7 @@ class Cube {
     Cube(Context context, Bitmap depthImage, Bitmap orgImage) {
         // Setup vertex-array buffer. Vertices in float. An float has 4 bytes
         VertexJack verJ = new VertexJack(context, depthImage);
-
-        //TODO: Jack Example.
-//        InputStream imageIS = context.getResources().openRawResource(R.raw.face22);
-//        Bitmap myImage = BitmapFactory.decodeStream(imageIS);
-
-//        Bitmap myImage = orgImage;
+        numFaces = VertexJack.COLORS_ARRAY_SIZE;
         orgImage = Bitmap.createScaledBitmap(orgImage, 300, 403, true);
         verJ.getRgb(orgImage);
         this.vertices =verJ.getVertices();

@@ -10,9 +10,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Size;
@@ -45,6 +47,9 @@ public class LogicActivity extends AppCompatActivity {
 
     public static final Double MAX_FLOAT_NUM = Double.POSITIVE_INFINITY;
     private ImageView imgView;
+
+    int DEPTH_COL_NOSE = 0;
+    int DEPTH_ROW_NOSE = 0;
 
     private inputHandler inputHandler;
     private Mat imgMat;
@@ -123,7 +128,7 @@ public class LogicActivity extends AppCompatActivity {
 
                 depth = createDepthMap(depth_patches);
 
-                depthBmp = Utils2D.mat2bmp(depth);
+
 
 
             }
@@ -148,6 +153,10 @@ public class LogicActivity extends AppCompatActivity {
             //initialize the View
             setContentView(R.layout.activity_logic);
             imgView = (ImageView) findViewById(R.id.faceImage);
+            depthBmp = Utils2D.mat2bmp(depth);
+            findDepthNose(new Rect((int)Settings.IMAGE_SIZE.width/3,(int)Settings.IMAGE_SIZE.height/3, (int)Settings.IMAGE_SIZE.height/3,(int)Settings.IMAGE_SIZE.height/3));
+            alignImages();
+            depthBmp = Utils2D.mat2bmp(depth);
             imgView.setImageBitmap(depthBmp);
             databaseAccess.close();
         }
@@ -166,7 +175,7 @@ public class LogicActivity extends AppCompatActivity {
 
     public void close(View view) {
         // Morphing settings
-        int morph_size = 13;
+        int morph_size = 3;
 
         // Closing morphology:
         Mat element = getStructuringElement( MORPH_ELLIPSE, new Size( 2*morph_size + 1, 2*morph_size+1 ), new Point( morph_size, morph_size ) );
@@ -327,5 +336,41 @@ public class LogicActivity extends AppCompatActivity {
         }
 
         return res_list;
+    }
+
+    public void findDepthNose(Rect area){
+
+        int maxVal = Integer.MIN_VALUE;
+        for(int col = area.x; col < area.x + area.width; col++){
+            for(int row = area.y; row < area.y + area.height; row++){
+                if(maxVal < depthBmp.getPixel(col,row)){
+                    maxVal =  depthBmp.getPixel(col,row);
+                    DEPTH_ROW_NOSE = row;
+                    DEPTH_COL_NOSE = col;
+                }
+
+            }
+        }
+
+    }
+
+    public void alignImages(){
+
+        float scale_x = (float) (Settings.ORIG_WIDTH_SIZE/Settings.IMAGE_SIZE.width);
+        float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE/Settings.IMAGE_SIZE.height);
+
+
+        int x_translate = (int) (Settings.X_NOSE / scale_x  - DEPTH_COL_NOSE);
+        int y_translate = (int) (Settings.Y_NOSE / scale_y  - DEPTH_ROW_NOSE);
+
+        double[][] intArray = new double[][]{{1d,0d,(double)x_translate},{0d,1d,(double)y_translate}};
+        Mat matObject = new Mat(2,3,CvType.CV_32F);
+        for(int row=0;row<2;row++){
+            for(int col=0;col<3;col++)
+                matObject.put(row, col, intArray[row][col]);
+        }
+
+        Imgproc.warpAffine(depth,depth,matObject,Settings.IMAGE_SIZE);
+        System.out.println("FINISHED");
     }
 }

@@ -12,14 +12,15 @@ import org.opencv.imgproc.Imgproc;
 
 
 class VertexJack {
-    public static final int COLORS_ARRAY_SIZE = 28000;
-    public static final int VERTICES_SIZE = COLORS_ARRAY_SIZE * 12;
+
+    static final int COLORS_ARRAY_SIZE =29000;
+    private static final int VERTICES_SIZE = COLORS_ARRAY_SIZE * 12;
     private static final float X_CHANGE = 0.5f;
     private static final float Y_CHANGE = 0.67f;
     private static final float Z_CHANGE = 0.5f;
     private static final int Z_DEPTH = 255;
     private Context context;
-    private Mat depthhImg;
+    private Mat depthImg;
     private Bitmap imgOrg;
     private Bitmap imgDepth;
     private Size s;
@@ -28,7 +29,7 @@ class VertexJack {
     VertexJack(Context context, Bitmap depthImage){
         this.context = context;
         this.imgDepth = depthImage;
-        this.depthhImg = getImgGrayScale();
+        this.depthImg = getImgGrayScale();
 
 //        InputStream stream = context.getResources().openRawResource(R.raw.jack);
 
@@ -59,17 +60,11 @@ class VertexJack {
         float[] vertices = new float[VERTICES_SIZE];
         for(int i=0; i < VERTICES_SIZE; i+=12){
             int color =imgOrg.getPixel(col,row);
-//            Log.e(TAG,":color-"+color);
-            this.colors[i/12][0] = (float)Color.red(color)/255;
-            this.colors[i/12][1] = (float)Color.green(color)/255;
-            this.colors[i/12][2] = (float)Color.blue(color)/255;
-            this.colors[i/12][3] = 1.0f;
 
-            if(depthhImg.get(row,col)[0] == 0){
-                this.colors[i/12][0] = 0.0f;
-                this.colors[i/12][1] = 0.0f;
-                this.colors[i/12][2] = 0.0f;
-                this.colors[i/12][3] = 1.0f;
+            setColor(i, color, false);
+
+            if(depthImg.get(row,col)[0] == 0){
+                setColor(i, color, true);
             }
             row+=2;
 
@@ -97,10 +92,23 @@ class VertexJack {
         return vertices;
     }
 
+    private void setColor(int i, int color, boolean isBlack) {
+        this.colors[i/12][0] = (float) Color.red(color)/255;
+        this.colors[i/12][1] = (float)Color.green(color)/255;
+        this.colors[i/12][2] = (float)Color.blue(color)/255;
+        this.colors[i/12][3] = 1.0f;
+        if(isBlack){
+            this.colors[i/12][0] = 0.0f;
+            this.colors[i/12][1] = 0.0f;
+            this.colors[i/12][2] = 0.0f;
+            this.colors[i/12][3] = 1.0f;
+        }
+    }
+
     private void assignDotsValue(int row, int col, float[] vertices, int i) {
         vertices[i] = ((float)col/300)- X_CHANGE;
         vertices[i+1] = ((float)-row/403)+ Y_CHANGE;
-        vertices[i+2] = ((float) depthhImg.get(row,col)[0]/ Z_DEPTH)- Z_CHANGE;
+        vertices[i+2] = ((float) depthImg.get(row,col)[0]/ Z_DEPTH)- Z_CHANGE;
     }
 
 
