@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backpalm"
     tools:context="com.javahelps.com.myapplication.LogicActivity">
 
     <ImageView
@@ -48,7 +49,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:onClick="close"
-            app:srcCompat="@android:drawable/ic_lock_lock" />
+            app:srcCompat="@android:drawable/ic_lock_idle_lock" />
 
         <ImageButton
             android:id="@+id/button5"
