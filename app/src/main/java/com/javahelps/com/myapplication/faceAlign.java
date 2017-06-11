@@ -46,10 +46,17 @@ class faceAlign {
         Double xNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
         Double yNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
 
-        int copyToPointx = Settings.trgtNoseShift.width - xNosed.intValue();
-        int copyToPointy = Settings.trgtNoseShift.height - yNosed.intValue();
+        Double copyToPointxd = Settings.trgtNoseShift.width - xNosed.intValue();
+        Double copyToPointyd = Settings.trgtNoseShift.height - yNosed.intValue();
 
-        resizedFace.copyTo(dstImg.colRange(copyToPointx + resizedFace.width()));
+        int copyToPointx = copyToPointxd.intValue();
+        int copyToPointy = copyToPointyd.intValue();
+
+        resizedFace.copyTo(
+                    dstImg
+                        .colRange(copyToPointx, copyToPointx + resizedFace.cols())
+                        .rowRange(copyToPointy, copyToPointy + resizedFace.rows())
+                    );
 
         return dstImg;
     }
