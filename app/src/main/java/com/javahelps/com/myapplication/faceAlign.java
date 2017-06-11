@@ -1,5 +1,7 @@
 package com.javahelps.com.myapplication;
 
+import android.support.constraint.solver.widgets.Rectangle;
+
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -7,19 +9,15 @@ import org.opencv.imgproc.Imgproc;
 
 import static com.javahelps.com.myapplication.Settings.trgtNoseShift;
 
-/**
- * Created by idan on 11/06/2017.
- */
-
-public class faceAlign {
+class faceAlign {
 
     private Mat srcImg;
-    private Rect srcRect;
+    private Rectangle srcRect;
     private Size srcNoseShift;
 
 
 
-    public faceAlign(Mat srcImg, Rect srcRect, Size srcNoseShift) {
+    faceAlign(Mat srcImg, Rectangle srcRect, Size srcNoseShift) {
         this.srcImg = srcImg;
         this.srcRect = srcRect;
         this.srcNoseShift = srcNoseShift;
