@@ -44,6 +44,12 @@ class Settings {
     static float SCALE_X = 0.0f;
     static float SCALE_Y = 0.0f;
 
+    // Face Align
+
+    static final double sideOffset  = 1.1;
+    static final double upOffset  = 1.1;
+    static final double downOffset  = 1.2;
+
     static void setNosePosition(float x_nose,float y_nose){
         X_NOSE = (int) x_nose;
         Y_NOSE = (int) y_nose;
