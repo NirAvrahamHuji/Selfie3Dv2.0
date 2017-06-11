@@ -46,9 +46,9 @@ class Settings {
 
     // Face Align
 
-    static final double sideOffset  = 1.1;
-    static final double upOffset  = 1.1;
-    static final double downOffset  = 1.2;
+    static final double sideOffset  = 0.1;
+    static final double upOffset  = 0.1;
+    static final double downOffset  = 0.2;
 
     static final Size trgtRect = new Size(6,6);
     static final Size trgtNoseShift = new Size(6,6);
