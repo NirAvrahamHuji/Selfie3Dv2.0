@@ -397,6 +397,7 @@ public class LogicActivity extends AppCompatActivity {
     }
 
     public void alignImages(int faceWidth, int faceHeight){
+//        TODO: the part were we tried to implement an align of the face at the end of the processing.
 //        // get the new sizes of the input face
 //        float inputFaceWidth = Settings.FACE_INPUT_IMG_WIDTH * Settings.ORIG_WIDTH_SIZE / Settings.CROP_WIDTH;
 //        float inputFaceHeight = Settings.FACE_INPUT_IMG_HEIGHT * Settings.ORIG_HEIGHT_SIZE / Settings.CROP_HEIGHT;

@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.image);
         rotateButton = (ImageButton) findViewById(R.id.rotate);
         cam_img = new CameraImage(this);
-
-
-
     }
 
     @Override
@@ -129,26 +126,12 @@ public class MainActivity extends AppCompatActivity {
                 Settings.INPUT_IMG_WIDTH = mImageBitmap.getWidth();
 
                 Rectangle rect = drawFaceBorder(mFaces);
-                Log.d(TAG,""+rect.x+" "+rect.y+" " + (rect.width+rect.x)+  " " + (rect.height+rect.y) +" mBitMapWidth:" +mImageBitmap.getWidth()+ " mBitMapHeight:" + mImageBitmap.getHeight());
+                Log.d(TAG, String.format("x, y : %d %d \n width, height %d %d \n input width , height: %d %d", rect.x, rect.y, rect.width, rect.height, mImageBitmap.getWidth(), mImageBitmap.getHeight()));
 
-                Settings.SCALE_X = (float)Math.min(rect.width, mImageBitmap.getWidth() - 1) / Settings.ORIG_WIDTH_SIZE;
-                Settings.SCALE_Y = (float)Math.min(rect.height, mImageBitmap.getHeight() - 1) / Settings.ORIG_HEIGHT_SIZE;
-                mImageBitmap = Bitmap.createBitmap(mImageBitmap,rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
+                mImageBitmap = Bitmap.createBitmap(mImageBitmap, rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
 
                 Settings.CROP_WIDTH = Math.min(rect.width, mImageBitmap.getWidth() - 1);
                 Settings.CROP_HEIGHT = Math.min(rect.height, mImageBitmap.getHeight() - 1);
-
-                // change it to be a Mat object
-                Size sz = new Size(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE);
-                Mat input_img_mat = getMatFromBitmap(mImageBitmap);
-                Imgproc.resize(input_img_mat, input_img_mat, sz);
-
-                Mat align_mat = alignImages(input_img_mat);
-
-                // change back to be Bitmap
-                    Bitmap b = Bitmap.createBitmap(align_mat.width(), align_mat.height(), Bitmap.Config.ARGB_8888);
-                    Utils.matToBitmap(input_img_mat,b);
-                    mImageBitmap = b;
 
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
@@ -210,10 +193,10 @@ public class MainActivity extends AppCompatActivity {
 
         Settings.X_NOSE = Settings.X_NOSE - Math.max((int)face.getPosition().x - x_change, 0);
         Settings.Y_NOSE = Settings.Y_NOSE -  Math.max((int)face.getPosition().y - y_change, 0);
-        rect.setBounds(Math.max((int)face.getPosition().x - x_change, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHeight);
+        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
 
-//        original
-//        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
+        // to take an environment - use this code
+        //rect.setBounds(Math.max((int)face.getPosition().x - x_change, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHeight);
 
         return rect;
 
