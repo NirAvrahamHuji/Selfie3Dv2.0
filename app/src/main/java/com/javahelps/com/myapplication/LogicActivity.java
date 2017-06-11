@@ -155,7 +155,7 @@ public class LogicActivity extends AppCompatActivity {
             // find the nose to match the move the images to be with the same center
             findDepthNose(new Rect((int)Settings.IMAGE_SIZE.width / 3,(int)Settings.IMAGE_SIZE.height / 3, (int)Settings.IMAGE_SIZE.height / 3,(int)Settings.IMAGE_SIZE.height / 3));
 
-            alignImages(faceWidth, faceHeight);
+            alignImages();
 
             depthBmp = Utils2D.mat2bmp(depth);
             imgView.setImageBitmap(depthBmp);
@@ -396,36 +396,7 @@ public class LogicActivity extends AppCompatActivity {
         return res_list;
     }
 
-    public void alignImages(int faceWidth, int faceHeight){
-//        TODO: the part were we tried to implement an align of the face at the end of the processing.
-//        // get the new sizes of the input face
-//        float inputFaceWidth = Settings.FACE_INPUT_IMG_WIDTH * Settings.ORIG_WIDTH_SIZE / Settings.CROP_WIDTH;
-//        float inputFaceHeight = Settings.FACE_INPUT_IMG_HEIGHT * Settings.ORIG_HEIGHT_SIZE / Settings.CROP_HEIGHT;
-//
-//        // get the scaling parameters from the input img to the depth
-//        float scaleFactorWidth = ((float) faceWidth / Settings.WIDTH_SIZE) * ((float) Settings.ORIG_WIDTH_SIZE / inputFaceWidth);
-//        float scaleFactorHeight = ((float) faceHeight / Settings.HEIGHT_SIZE) * ((float) Settings.ORIG_HEIGHT_SIZE / inputFaceHeight);
-//
-//        // create a matrix with the scaling factors in each axis
-//        double[][] intArrayFace = new double[][]{{scaleFactorWidth, 0d, 0d}, {0d, scaleFactorHeight, 0d}};
-//
-//        Mat matObject = new Mat(2,3, CvType.CV_32F);
-//        for(int row = 0; row < 2; row++){
-//            for(int col = 0; col < 3; col++)
-//                matObject.put(row, col, intArrayFace[row][col]);
-//        }
-//
-//        // change the image according the the scaling matrix
-//        Mat inputImg = getMatFromBitmap(orgBmp);
-//        Imgproc.warpAffine(inputImg, inputImg, matObject, new Size(938,938));
-//
-//        Bitmap temp_bitmap = Bitmap.createBitmap(inputImg.width(), inputImg.height(), Bitmap.Config.ARGB_8888);
-//        Utils.matToBitmap(inputImg, temp_bitmap);
-//        orgBmp = temp_bitmap;
-//
-//        float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width) * scaleFactorWidth;
-//        float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height) * scaleFactorHeight;
-
+    public void alignImages(){
         float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
         float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 

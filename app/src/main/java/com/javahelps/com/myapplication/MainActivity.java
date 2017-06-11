@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.provider.*;
+import android.support.constraint.solver.widgets.ConstraintAnchor;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -128,10 +129,18 @@ public class MainActivity extends AppCompatActivity {
                 Rectangle rect = drawFaceBorder(mFaces);
                 Log.d(TAG, String.format("x, y : %d %d \n width, height %d %d \n input width , height: %d %d", rect.x, rect.y, rect.width, rect.height, mImageBitmap.getWidth(), mImageBitmap.getHeight()));
 
-                mImageBitmap = Bitmap.createBitmap(mImageBitmap, rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
+                // moved to the align face functionality
+//                mImageBitmap = Bitmap.createBitmap(mImageBitmap, rect.x, rect.y, Math.min(rect.width, mImageBitmap.getWidth() - 1), Math.min(rect.height, mImageBitmap.getHeight() - 1));
+//                Settings.CROP_WIDTH = Math.min(rect.width, mImageBitmap.getWidth() - 1);
+//                Settings.CROP_HEIGHT = Math.min(rect.height, mImageBitmap.getHeight() - 1);
 
-                Settings.CROP_WIDTH = Math.min(rect.width, mImageBitmap.getWidth() - 1);
-                Settings.CROP_HEIGHT = Math.min(rect.height, mImageBitmap.getHeight() - 1);
+                Mat face_align_input_mat = new Mat();
+                Utils.bitmapToMat(mImageBitmap, face_align_input_mat);
+
+                faceAlign face_align_obj = new faceAlign(face_align_input_mat, rect, new Size(Settings.X_NOSE, Settings.Y_NOSE));
+                Mat aligned_input_mat = face_align_obj.processImage();
+
+                Utils.matToBitmap(aligned_input_mat, mImageBitmap);
 
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();
@@ -170,6 +179,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Rectangle drawFaceBorder(SparseArray<Face> mFaces) {
+        float nose_x = 0;
+        float nose_y = 0;
+
         Rectangle rect = new Rectangle();
         Face face = mFaces.valueAt(0);
         List<Landmark> landmarks = face.getLandmarks();
@@ -177,23 +189,18 @@ public class MainActivity extends AppCompatActivity {
             int type = landmark.getType();
             if (type == NOSE_TYPE)
             {
-                float nose_x = landmark.getPosition().x;
-                float nose_y = landmark.getPosition().y;
-                Settings.setNosePosition(nose_x,nose_y);
-                System.out.println("NosePosition:  " + nose_x + "," +nose_y );
+                nose_x = landmark.getPosition().x;
+                nose_y = landmark.getPosition().y;
+                System.out.println(String.format("NosePosition: %f %f ", nose_x, nose_y));
             }
         }
-
-        int x_change = (int) face.getWidth() / 2;
-        int y_change = (int) (face.getHeight() * 27 / 65);
-        int newHeight = (int) (face.getHeight() * 100 / 60.767);
 
         Settings.FACE_INPUT_IMG_WIDTH = face.getWidth();
         Settings.FACE_INPUT_IMG_HEIGHT = face.getHeight();
 
-        Settings.X_NOSE = Settings.X_NOSE - Math.max((int)face.getPosition().x - x_change, 0);
-        Settings.Y_NOSE = Settings.Y_NOSE -  Math.max((int)face.getPosition().y - y_change, 0);
-        rect.setBounds(Math.max((int)face.getPosition().x,0),Math.max((int)face.getPosition().y,0),(int)face.getWidth(),(int)face.getHeight());
+        Settings.setNosePosition(nose_x - Math.max((int)face.getPosition().x, 0), nose_y - Math.max((int)face.getPosition().y, 0));
+
+        rect.setBounds(Math.max((int)face.getPosition().x, 0), Math.max((int)face.getPosition().y, 0), (int)face.getWidth(), (int)face.getHeight());
 
         // to take an environment - use this code
         //rect.setBounds(Math.max((int)face.getPosition().x - x_change, 0), Math.max((int)face.getPosition().y - y_change, 0),(int) (2 * face.getWidth()), newHeight);
