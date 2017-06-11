@@ -22,7 +22,7 @@ class faceAlign {
 
     public Mat processImage() {
 
-        Mat dstImg = Mat.zeros(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE);
+        Mat dstImg = Mat.zeros(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE_RGB);
 
         Double x1d = srcRect.x - srcRect.width * Settings.sideOffset;
         Double x2d = srcRect.x + srcRect.width * (1 + Settings.sideOffset);
@@ -36,9 +36,9 @@ class faceAlign {
         int y1 = y1d.intValue();
         int y2 = y2d.intValue();
 
-        Mat resizedFace = new Mat(new Size(x2 - x1, y2 - y1), Settings.IMAGE_CVTYPE);
+        Mat resizedFace = new Mat(new Size(x2 - x1, y2 - y1), Settings.IMAGE_CVTYPE_RGB);
 
-        Imgproc.resize(srcImg.colRange(x1, x2).rowRange(y1, y2), resizedFace, new Size(0,0));
+        Imgproc.resize(srcImg.colRange(x1, x2).rowRange(y1, y2), resizedFace, resizedFace.size());
 
         Double xNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
         Double yNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
@@ -46,14 +46,25 @@ class faceAlign {
         Double copyToPointxd = Settings.trgtNoseShift.width - xNosed.intValue();
         Double copyToPointyd = Settings.trgtNoseShift.height - yNosed.intValue();
 
-        int copyToPointx = copyToPointxd.intValue();
-        int copyToPointy = copyToPointyd.intValue();
+        int copyToPointx1 = Math.max(copyToPointxd.intValue(), 0);
+        int copyToPointy1 = Math.max(copyToPointyd.intValue(), 0);
+        int copyToPointx2 = Math.min(copyToPointx1 + resizedFace.cols(), dstImg.cols());
+        int copyToPointy2 = Math.min(copyToPointy1 + resizedFace.rows(), dstImg.rows());
 
-        resizedFace.copyTo(
-                    dstImg
-                        .colRange(copyToPointx, copyToPointx + resizedFace.cols())
-                        .rowRange(copyToPointy, copyToPointy + resizedFace.rows())
-                    );
+        if (copyToPointx1 == 0) {
+            copyToPointx2 = resizedFace.cols();
+        }
+        if (copyToPointy1 == 0) {
+            copyToPointy2 = resizedFace.rows();
+        }
+        if (copyToPointx2 == dstImg.cols()) {
+            copyToPointx1 = dstImg.cols() - resizedFace.cols();
+        }
+        if (copyToPointy2 == dstImg.rows()) {
+            copyToPointy1 = dstImg.rows() - resizedFace.rows();
+        }
+
+        resizedFace.copyTo(dstImg.colRange(copyToPointx1, copyToPointx2).rowRange(copyToPointy1, copyToPointy2));
 
         return dstImg;
     }
