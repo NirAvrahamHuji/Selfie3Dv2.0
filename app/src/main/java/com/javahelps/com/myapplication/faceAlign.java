@@ -13,15 +13,18 @@ public class faceAlign {
     private Mat srcImg;
     private Rect srcRect;
     private Size srcNoseShift;
-    private Size trgtRect;
-    private Size trgtNoseShift;
 
 
-    public faceAlign(Mat srcImg, Rect srcRect, Size srcNoseShift, Size trgtRect, Size trgtNoseShift) {
+
+    public faceAlign(Mat srcImg, Rect srcRect, Size srcNoseShift) {
         this.srcImg = srcImg;
         this.srcRect = srcRect;
         this.srcNoseShift = srcNoseShift;
-        this.trgtRect = trgtRect;
-        this.trgtNoseShift = trgtNoseShift;
+    }
+
+    public Mat processImage() {
+        Mat dstImg = new Mat(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE);
+
+        return dstImg;
     }
 }
