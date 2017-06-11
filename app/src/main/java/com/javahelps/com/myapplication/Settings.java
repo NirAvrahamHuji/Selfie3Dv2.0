@@ -2,11 +2,14 @@ package com.javahelps.com.myapplication;
 
 import org.opencv.core.Size;
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC4;
 
 class Settings {
 
     static final int ENV_SIZE = 0;
     static final int IMAGE_CVTYPE = CV_8UC1;
+
+    static final int IMAGE_CVTYPE_RGB = CV_8UC4;
 
     // the size we resize to input image to
     static final int WIDTH_SIZE = 128;
@@ -48,7 +51,7 @@ class Settings {
 
     static final double sideOffset  = 0.1;
     static final double upOffset  = 0.1;
-    static final double downOffset  = 0.2;
+    static final double downOffset  = 0.1;
 
     // the size of the detected face, (width, height)
     static final Size trgtRect = new Size(490, 650);
