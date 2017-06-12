@@ -20,8 +20,24 @@ public class Utils2D {
         Mat tmp = new Mat (m.rows(), m.cols(), Settings.IMAGE_CVTYPE, new Scalar(4));
 
         try {
-            //Imgproc.cvtColor(seedsImage, tmp, Imgproc.COLOR_RGB2BGRA);
+//            Imgproc.cvtColor(m, tmp, Imgproc.COLOR_RGB2BGRA);
             Imgproc.cvtColor(m, tmp, Imgproc.COLOR_GRAY2RGBA, 4);
+            bmp = Bitmap.createBitmap(tmp.cols(), tmp.rows(), Bitmap.Config.ARGB_8888);
+            org.opencv.android.Utils.matToBitmap(tmp, bmp);
+        }
+        catch (CvException e){
+            Log.d("Exception",e.getMessage());
+        }
+
+        return bmp;
+    }
+
+    static Bitmap mat2bmpRGB(Mat m) {
+        Bitmap bmp = null;
+        Mat tmp = new Mat (m.rows(), m.cols(), Settings.IMAGE_CVTYPE_RGB, new Scalar(4));
+
+        try {
+            Imgproc.cvtColor(m, tmp, Imgproc.COLOR_RGB2BGRA);
             bmp = Bitmap.createBitmap(tmp.cols(), tmp.rows(), Bitmap.Config.ARGB_8888);
             org.opencv.android.Utils.matToBitmap(tmp, bmp);
         }

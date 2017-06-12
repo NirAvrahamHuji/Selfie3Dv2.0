@@ -41,7 +41,7 @@ class faceAlign {
         Imgproc.resize(srcImg.colRange(x1, x2).rowRange(y1, y2), resizedFace, resizedFace.size());
 
         Double xNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
-        Double yNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
+        Double yNosed = Settings.trgtRect.height * (Settings.sideOffset + srcNoseShift.height / srcRect.height);
 
         Double copyToPointxd = Settings.trgtNoseShift.width - xNosed.intValue();
         Double copyToPointyd = Settings.trgtNoseShift.height - yNosed.intValue();

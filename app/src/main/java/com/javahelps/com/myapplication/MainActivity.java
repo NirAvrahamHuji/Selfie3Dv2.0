@@ -139,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
 
                 faceAlign face_align_obj = new faceAlign(face_align_input_mat, rect, new Size(Settings.X_NOSE, Settings.Y_NOSE));
                 Mat aligned_input_mat = face_align_obj.processImage();
-
-                Utils.matToBitmap(aligned_input_mat, mImageBitmap);
+                mImageBitmap = Utils2D.mat2bmpRGB(aligned_input_mat);
+//                Utils.matToBitmap(aligned_input_mat, mImageBitmap);
 
                 mImageView.setImageBitmap(mImageBitmap);
                 detector.release();

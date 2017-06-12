@@ -51,13 +51,13 @@ class Settings {
 
     static final double sideOffset  = 0.1;
     static final double upOffset  = 0.1;
-    static final double downOffset  = 0.1;
+    static final double downOffset  = 0.2;
 
     // the size of the detected face, (width, height)
-    static final Size trgtRect = new Size(490, 650);
+    static final Size trgtRect = new Size(450, 600);
     // the nose position in the whole image size (938, 938),
     // (x, y)
-    static final Size trgtNoseShift = new Size(470, 615);
+    static final Size trgtNoseShift = new Size(465, 600);
 
     static void setNosePosition(float x_nose,float y_nose){
         X_NOSE = (int) x_nose;
