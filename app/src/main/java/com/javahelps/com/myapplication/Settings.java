@@ -57,7 +57,7 @@ class Settings {
     static final Size trgtRect = new Size(450, 600);
     // the nose position in the whole image size (938, 938),
     // (x, y)
-    static final Size trgtNoseShift = new Size(465, 600);
+    static final Size trgtNoseShift = new Size(440, 600);
 
     static void setNosePosition(float x_nose,float y_nose){
         X_NOSE = (int) x_nose;

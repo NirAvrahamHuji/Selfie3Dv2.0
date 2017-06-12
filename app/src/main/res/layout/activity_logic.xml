@@ -37,6 +37,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
+        android:gravity="center|bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -47,16 +48,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="@drawable/button_bg_transparent"
             android:onClick="close"
-            app:srcCompat="@android:drawable/ic_lock_idle_lock" />
+            app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
         <ImageButton
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@null"
+            android:background="@drawable/button_bg_transparent"
             android:onClick="nextActivity"
             app:srcCompat="@android:drawable/ic_menu_send" />
 
@@ -66,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="optimize_output"
-            android:background="@null"
+            android:background="@drawable/button_bg_transparent"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
     </LinearLayout>
@@ -75,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/guideline"
-        app:layout_constraintGuide_begin="515dp"
+        app:layout_constraintGuide_begin="530dp"
         android:orientation="horizontal" />
 
     <android.support.constraint.Guideline

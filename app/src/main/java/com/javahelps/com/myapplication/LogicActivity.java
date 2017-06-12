@@ -400,8 +400,8 @@ public class LogicActivity extends AppCompatActivity {
         float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
         float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 
-        int x_translate = (int) (Settings.X_NOSE / scale_x  - DEPTH_COL_NOSE);
-        int y_translate = (int) (Settings.Y_NOSE / scale_y  - DEPTH_ROW_NOSE);
+        int x_translate = (int) (Settings.trgtNoseShift.width / scale_x  - DEPTH_COL_NOSE);
+        int y_translate = (int) (Settings.trgtNoseShift.height / scale_y  - DEPTH_ROW_NOSE);
 
         double[][] intArray = new double[][]{{1d, 0d,(double)x_translate}, {0d, 1d,(double)y_translate}};
 
