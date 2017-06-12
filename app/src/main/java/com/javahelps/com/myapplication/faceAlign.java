@@ -44,7 +44,6 @@ class faceAlign {
         int y1 = y1d.intValue();
         int y2 = y2d.intValue();
 
-
         Double trgtWidth = Settings.trgtRect.width;
         Double trgtHeight = Settings.trgtRect.height;
 

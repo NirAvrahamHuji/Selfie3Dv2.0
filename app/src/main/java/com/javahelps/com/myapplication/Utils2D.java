@@ -9,11 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-/**
- * Created by avrni on 6/1/2017.
- */
-
-public class Utils2D {
+class Utils2D {
 
     static Bitmap mat2bmp(Mat m) {
         Bitmap bmp = null;
