@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -148,77 +149,11 @@ public class LogicActivity extends AppCompatActivity {
             imgView = (ImageView) findViewById(R.id.faceImage);
             depthBmp = Utils2D.mat2bmp(depth);
 
-            // find the face width in the 1/3 middle section of the depth image
-            int faceWidth = findFaceWidthDepth(new Rect(0, (int) Settings.IMAGE_SIZE.height / 3, depth.width(), (int) Settings.IMAGE_SIZE.height / 3));
-            int faceHeight = findFaceHeightDepth(new Rect((int)Settings.IMAGE_SIZE.width / 3, 0, (int)Settings.IMAGE_SIZE.width / 3, depth.height()));
-
-            // find the nose to match the move the images to be with the same center
-            findDepthNose(new Rect((int)Settings.IMAGE_SIZE.width / 3,(int)Settings.IMAGE_SIZE.height / 3, (int)Settings.IMAGE_SIZE.height / 3,(int)Settings.IMAGE_SIZE.height / 3));
-
             alignImages();
 
             depthBmp = Utils2D.mat2bmp(depth);
             imgView.setImageBitmap(depthBmp);
-//            imgView.setImageBitmap(orgBmp);
             databaseAccess.close();
-        }
-    }
-
-    private int findFaceHeightDepth(Rect rect) {
-        int heightMaxValue = Integer.MIN_VALUE;
-        boolean exitLoop = false;
-
-        for(int col = rect.x; col < rect.x + rect.width; col++){
-            if (exitLoop) {
-                break;
-            }
-
-            for(int row = rect.y; row < rect.y + rect.height; row++){
-
-                // check if there is value in the depth image
-                if(0 != depthBmp.getPixel(col, row)){
-                    heightMaxValue = col;
-                    exitLoop = true;
-                    break;
-                }
-            }
-        }
-
-        return depthBmp.getHeight() - heightMaxValue;
-    }
-
-    private int findFaceWidthDepth(Rect rect) {
-        int rightMostValue = Integer.MIN_VALUE;
-        int leftMostValue = Integer.MAX_VALUE;
-
-        for(int col = rect.x; col < rect.x + rect.width; col++){
-            for(int row = rect.y; row < rect.y + rect.height; row++){
-
-                // check if there is value in the depth image
-                if(0 != depthBmp.getPixel(col, row)){
-                    if (col < leftMostValue) {
-                        leftMostValue = col;
-                    }
-                    if (col > rightMostValue) {
-                        rightMostValue = col;
-                    }
-                }
-            }
-        }
-
-        return rightMostValue - leftMostValue;
-    }
-
-    public void findDepthNose(Rect area){
-        int maxVal = Integer.MIN_VALUE;
-        for(int col = area.x; col < area.x + area.width; col++){
-            for(int row = area.y; row < area.y + area.height; row++){
-                if(maxVal < depthBmp.getPixel(col,row)){
-                    maxVal =  depthBmp.getPixel(col,row);
-                    DEPTH_ROW_NOSE = row;
-                    DEPTH_COL_NOSE = col;
-                }
-            }
         }
     }
 
@@ -243,13 +178,6 @@ public class LogicActivity extends AppCompatActivity {
 
         Bitmap depthbmp = Utils2D.mat2bmp(depth);
         imgView.setImageBitmap(depthbmp);
-    }
-
-    public void showDepthPatch(View view){
-        DepthPatch d = depth_patches.get(i);
-        Bitmap dpbmp = Utils2D.mat2bmp(d.getDepthPatch());
-        imgView.setImageBitmap(dpbmp);
-        i++;
     }
 
     private Mat createDepthMap(ArrayList<DepthPatch> depth_patches) {
@@ -384,24 +312,16 @@ public class LogicActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-    public ArrayList<Float> MatOftoList(Mat input_mat) {
-        ArrayList<Float> res_list = new ArrayList<>();
-        for(int col =0; col < input_mat.cols(); col++) {
-            for (int row = 0; row < input_mat.rows(); row++) {
-                res_list.add((float) input_mat.get(row, col)[0]);
-            }
-        }
-
-        return res_list;
-    }
-
     public void alignImages(){
+
+        // find the nose to match the move the images to be with the same center
+        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(depth);
+
         float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
         float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 
-        int x_translate = (int) (Settings.trgtNoseShift.width / scale_x  - DEPTH_COL_NOSE);
-        int y_translate = (int) (Settings.trgtNoseShift.height / scale_y  - DEPTH_ROW_NOSE);
+        int x_translate = (int) (Settings.trgtNoseShift.width / scale_x  - (int)minMaxLocResult.maxLoc.x);
+        int y_translate = (int) (Settings.trgtNoseShift.height / scale_y  - (int)minMaxLocResult.maxLoc.y);
 
         double[][] intArray = new double[][]{{1d, 0d,(double)x_translate}, {0d, 1d,(double)y_translate}};
 
