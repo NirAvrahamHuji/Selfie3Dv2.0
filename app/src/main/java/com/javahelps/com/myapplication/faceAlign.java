@@ -24,6 +24,14 @@ class faceAlign {
 
         Mat dstImg = Mat.zeros(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE_RGB);
 
+//        for(int col = 0; col < dstImg.cols(); col++){
+//            for(int row = 0; row < dstImg.rows(); row++){
+//                continue;
+//            }
+//        }
+
+        // From where to copy
+
         Double x1d = srcRect.x - srcRect.width * Settings.sideOffset;
         Double x2d = srcRect.x + srcRect.width * (1 + Settings.sideOffset);
 
@@ -36,7 +44,10 @@ class faceAlign {
         int y1 = y1d.intValue();
         int y2 = y2d.intValue();
 
-        Mat resizedFace = new Mat(new Size(x2 - x1, y2 - y1), Settings.IMAGE_CVTYPE_RGB);
+        Double trgtWidth = Settings.trgtRect.width;
+        Double trgtHeight = Settings.trgtRect.height;
+
+        Mat resizedFace = new Mat(new Size(trgtWidth.intValue(), trgtHeight.intValue()), Settings.IMAGE_CVTYPE_RGB);
 
         Imgproc.resize(srcImg.colRange(x1, x2).rowRange(y1, y2), resizedFace, resizedFace.size());
 
