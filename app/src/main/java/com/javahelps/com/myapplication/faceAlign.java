@@ -24,11 +24,11 @@ class faceAlign {
 
         Mat dstImg = Mat.zeros(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE_RGB);
 
-//        for(int col = 0; col < dstImg.cols(); col++){
-//            for(int row = 0; row < dstImg.rows(); row++){
-//                continue;
-//            }
-//        }
+        for(int col = 0; col < dstImg.cols(); col++){
+            for(int row = 0; row < dstImg.rows(); row++){
+                dstImg.put(row, col, new double[]{0d, 0d, 0d, 255});
+            }
+        }
 
         // From where to copy
 
@@ -44,15 +44,15 @@ class faceAlign {
         int y1 = y1d.intValue();
         int y2 = y2d.intValue();
 
-        Double trgtWidth = Settings.trgtRect.width;
-        Double trgtHeight = Settings.trgtRect.height;
+        Double trgtWidth = Settings.trgtRect.width * (1 + 2 * Settings.sideOffset);
+        Double trgtHeight = Settings.trgtRect.height * (1 + Settings.upOffset + Settings.downOffset);
 
         Mat resizedFace = new Mat(new Size(trgtWidth.intValue(), trgtHeight.intValue()), Settings.IMAGE_CVTYPE_RGB);
 
         Imgproc.resize(srcImg.colRange(x1, x2).rowRange(y1, y2), resizedFace, resizedFace.size());
 
         Double xNosed = Settings.trgtRect.width * (Settings.sideOffset + srcNoseShift.width / srcRect.width);
-        Double yNosed = Settings.trgtRect.height * (Settings.sideOffset + srcNoseShift.height / srcRect.height);
+        Double yNosed = Settings.trgtRect.height * (Settings.upOffset + srcNoseShift.height / srcRect.height);
 
         Double copyToPointxd = Settings.trgtNoseShift.width - xNosed.intValue();
         Double copyToPointyd = Settings.trgtNoseShift.height - yNosed.intValue();
