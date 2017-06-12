@@ -2,38 +2,26 @@ package com.javahelps.com.myapplication;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.provider.*;
-import android.support.constraint.solver.widgets.ConstraintAnchor;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Size;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
 
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.constraint.solver.widgets.Rectangle;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
@@ -51,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int NOSE_TYPE = 6;
     private static final int NORMALIZE_NOSE_X = 450;
     private static final int NORMALIZE_NOSE_Y = 620;
+    public static final int RESIZE_CAMERA_INPUT_FACTOR = 2;
 
 
     static {
@@ -95,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
         //Get image from camera.
         if(requestCode == CameraImage.REQUEST_TAKE_PHOTO && resultCode == RESULT_OK){
             mImageBitmap = cam_img.setPic(mImageView);
+            // resize the camera input so it won't crash the nextActivity process
+            mImageBitmap = Bitmap.createScaledBitmap(mImageBitmap, mImageBitmap.getWidth() / RESIZE_CAMERA_INPUT_FACTOR, mImageBitmap.getHeight() / RESIZE_CAMERA_INPUT_FACTOR, true);
+
         }else if(requestCode == CameraImage.REQUEST_TAKE_PHOTO && resultCode == RESULT_CANCELED){
             Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
         }
@@ -117,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
     public void faceDetection(View view){
         SparseArray<Face> mFaces;
         FaceDetector detector = new FaceDetector.Builder(this).setTrackingEnabled(true).setLandmarkType(FaceDetector.ALL_LANDMARKS).setMode(FaceDetector.ALL_LANDMARKS).build();
+        // check if we choose the the crop button without choosing an input image
+        if (mImageBitmap == null) {
+            Toast toast = Toast.makeText(getApplicationContext(), "No input image is given", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
         if (!detector.isOperational()) {
             Log.i(TAG,"FaceDetector Failed");
         } else {
