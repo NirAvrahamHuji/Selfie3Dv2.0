@@ -35,7 +35,7 @@ class Cube {
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder()); // Use native byte order
         vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
-        vertexBuffer.put(verJ.getVertices());         // Copy data into buffer
+        vertexBuffer.put(this.vertices);         // Copy data into buffer
         vertexBuffer.position(0);           // Rewind
     }
 

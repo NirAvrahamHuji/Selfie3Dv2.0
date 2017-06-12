@@ -45,9 +45,6 @@ public class LogicActivity extends AppCompatActivity {
     public static final Double MAX_FLOAT_NUM = Double.POSITIVE_INFINITY;
     private ImageView imgView;
 
-    int DEPTH_COL_NOSE = 0;
-    int DEPTH_ROW_NOSE = 0;
-
     private inputHandler inputHandler;
     private Mat imgMat;
     DatabaseAccess databaseAccess;
@@ -315,13 +312,16 @@ public class LogicActivity extends AppCompatActivity {
     public void alignImages(){
 
         // find the nose to match the move the images to be with the same center
-        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(depth);
+        Core.MinMaxLocResult minMaxLocResult = Core.minMaxLoc(
+                depth.colRange(depth.cols() / 4, (depth.cols() / 4) * 3).
+                        rowRange(depth.rows() / 4, (depth.rows() / 4) * 3));
+//        depth.rowRange(0,depth.rows()/4);
 
         float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
         float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 
-        int x_translate = (int) (Settings.trgtNoseShift.width / scale_x  - (int)minMaxLocResult.maxLoc.x);
-        int y_translate = (int) (Settings.trgtNoseShift.height / scale_y  - (int)minMaxLocResult.maxLoc.y);
+        int x_translate = (int) (Settings.trgtNoseShift.width / scale_x  - ((int)minMaxLocResult.maxLoc.x + (depth.cols() / 4)));
+        int y_translate = (int) (Settings.trgtNoseShift.height / scale_y  - ((int)minMaxLocResult.maxLoc.y + (depth.rows() / 4)));
 
         double[][] intArray = new double[][]{{1d, 0d,(double)x_translate}, {0d, 1d,(double)y_translate}};
 

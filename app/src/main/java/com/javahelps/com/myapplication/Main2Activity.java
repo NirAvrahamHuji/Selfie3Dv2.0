@@ -24,7 +24,7 @@ public class Main2Activity extends Activity {
         Bitmap bmpOrg = BitmapFactory.decodeByteArray(bytes2, 0, bytes2.length);
 
 
-        glView = new GLSurfaceView(this);           // Allocate a GLSurfaceView
+        glView = new GLSurfaceView(this);// Allocate a GLSurfaceView
         glView.setRenderer(new MyGLRenderer(this, bmp, bmpOrg)); // Use a custom renderer
         this.setContentView(glView);                // This activity sets to GLSurfaceView
     }

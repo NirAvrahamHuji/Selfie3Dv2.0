@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -15,7 +16,7 @@ class VertexJack {
 
     static final int COLORS_ARRAY_SIZE =29000;
     private static final int VERTICES_SIZE = COLORS_ARRAY_SIZE * 12;
-    private static final float X_CHANGE = 0.5f;
+    private static final float X_CHANGE = -1.51f;
     private static final float Y_CHANGE = 0.67f;
     private static final float Z_CHANGE = 0.5f;
     private static final int Z_DEPTH = 255;
@@ -89,6 +90,8 @@ class VertexJack {
             }
 
         }
+
+        Log.d("DOTS",String.format("x: %f y: %f z: %f",x_avg/300,y_avg/403,z_avg));
         return vertices;
     }
 
@@ -98,17 +101,25 @@ class VertexJack {
         this.colors[i/12][2] = (float)Color.blue(color)/255;
         this.colors[i/12][3] = 1.0f;
         if(isBlack){
-            this.colors[i/12][0] = 0.0f;
-            this.colors[i/12][1] = 0.0f;
-            this.colors[i/12][2] = 0.0f;
+            this.colors[i/12][0] = 1.0f;
+            this.colors[i/12][1] = 1.0f;
+            this.colors[i/12][2] = 1.0f;
             this.colors[i/12][3] = 1.0f;
         }
     }
 
+    float x_avg = 0;
+    float y_avg = 0;
+    float z_avg = 0;
+
     private void assignDotsValue(int row, int col, float[] vertices, int i) {
-        vertices[i] = ((float)col/300)- X_CHANGE;
-        vertices[i+1] = ((float)-row/403)+ Y_CHANGE;
+        vertices[i] = ((float)col - 150+ X_CHANGE)/300;
+        vertices[i+1] = ((float) -row /403) + Y_CHANGE;
         vertices[i+2] = ((float) depthImg.get(row,col)[0]/ Z_DEPTH)- Z_CHANGE;
+        x_avg += vertices[i];
+        y_avg += vertices[i+1];
+        z_avg += vertices[i+2];
+
     }
 
 
