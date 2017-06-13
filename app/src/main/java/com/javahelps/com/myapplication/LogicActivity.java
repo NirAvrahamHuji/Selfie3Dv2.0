@@ -317,6 +317,10 @@ public class LogicActivity extends AppCompatActivity {
                         rowRange(depth.rows() / 4, (depth.rows() / 4) * 3));
 //        depth.rowRange(0,depth.rows()/4);
 
+        // Delete top of depth:
+        Mat blackBand = Mat.zeros(depth.rows()/4, depth.cols(), Settings.IMAGE_CVTYPE);
+        blackBand.copyTo(depth.rowRange(0, depth.rows()/4));
+
         float scale_x = (float) (Settings.ORIG_WIDTH_SIZE / Settings.IMAGE_SIZE.width);
         float scale_y = (float) (Settings.ORIG_HEIGHT_SIZE / Settings.IMAGE_SIZE.height);
 
