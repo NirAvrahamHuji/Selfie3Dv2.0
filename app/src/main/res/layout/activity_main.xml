@@ -59,35 +59,15 @@
         app:layout_constraintVertical_bias="1.0">
 
         <ImageButton
-            android:id="@+id/next"
+            android:id="@+id/imgDataBase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_bg_transparent"
-            android:onClick="nextActivity"
-            app:srcCompat="@android:drawable/ic_menu_send" />
-
-        <ImageButton
-            android:id="@+id/faceDetection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_bg_transparent"
-            android:onClick="faceDetection"
-            app:srcCompat="@android:drawable/ic_menu_crop"
-            tools:layout_editor_absoluteX="176dp"
-            tools:layout_editor_absoluteY="325dp" />
-
-        <ImageButton
-            android:id="@+id/imageCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_bg_transparent"
-            android:onClick="imageFromCamera"
-            app:srcCompat="@android:drawable/ic_menu_camera"
-            tools:layout_editor_absoluteX="24dp"
-            tools:layout_editor_absoluteY="376dp" />
+            android:onClick="imageFromDataBase"
+            app:srcCompat="@android:drawable/ic_menu_my_calendar"
+            tools:layout_editor_absoluteX="252dp"
+            tools:layout_editor_absoluteY="293dp" />
 
         <ImageButton
             android:id="@+id/imageGallery"
@@ -101,15 +81,35 @@
             tools:layout_editor_absoluteY="239dp" />
 
         <ImageButton
-            android:id="@+id/imgDataBase"
+            android:id="@+id/imageCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_bg_transparent"
-            android:onClick="imageFromDataBase"
-            app:srcCompat="@android:drawable/ic_menu_my_calendar"
-            tools:layout_editor_absoluteX="252dp"
-            tools:layout_editor_absoluteY="293dp" />
+            android:onClick="imageFromCamera"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="376dp" />
+
+        <ImageButton
+            android:id="@+id/faceDetection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg_transparent"
+            android:onClick="faceDetection"
+            app:srcCompat="@android:drawable/ic_menu_crop"
+            tools:layout_editor_absoluteX="176dp"
+            tools:layout_editor_absoluteY="325dp" />
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg_transparent"
+            android:onClick="nextActivity"
+            app:srcCompat="@android:drawable/ic_menu_send" />
 
     </LinearLayout>
 

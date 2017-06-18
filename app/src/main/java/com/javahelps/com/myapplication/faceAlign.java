@@ -38,10 +38,10 @@ class faceAlign {
         Double y1d = srcRect.y - srcRect.height * Settings.upOffset;
         Double y2d = srcRect.y + srcRect.height * (1 + Settings.downOffset);
 
-        int x1 = x1d.intValue();
+        int x1 = Math.max(x1d.intValue(), 0);
         int x2 = Math.min(x2d.intValue(), srcImg.width());
 
-        int y1 = y1d.intValue();
+        int y1 = Math.max(y1d.intValue(), 0);
         int y2 = Math.min(y2d.intValue(), srcImg.height());
 
         Double trgtWidth = Settings.trgtRect.width * (1 + 2 * Settings.sideOffset);

@@ -53,15 +53,6 @@
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
         <ImageButton
-            android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_bg_transparent"
-            android:onClick="nextActivity"
-            app:srcCompat="@android:drawable/ic_menu_send" />
-
-        <ImageButton
             android:id="@+id/PleaseOp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,6 +60,15 @@
             android:onClick="optimize_output"
             android:background="@drawable/button_bg_transparent"
             app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
+            android:id="@+id/button5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg_transparent"
+            android:onClick="nextActivity"
+            app:srcCompat="@android:drawable/ic_menu_send" />
 
     </LinearLayout>
 
