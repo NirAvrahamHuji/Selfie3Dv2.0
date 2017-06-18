@@ -14,11 +14,10 @@ class DepthPatch implements Comparator<DepthPatch>{
     private Mat _dp;
 
     // Empty constructor
-    DepthPatch(){
+    DepthPatch(){}
 
-    }
     // constructor
-    public DepthPatch(int id, int col, int row, Mat dp){
+    DepthPatch(int id, int col, int row, Mat dp){
         this._id = id;
         this._col = col;
         this._row = row;
@@ -36,7 +35,7 @@ class DepthPatch implements Comparator<DepthPatch>{
     }
 
     // getting col
-    public int getCol(){
+    int getCol(){
         return this._col;
     }
 
@@ -45,7 +44,7 @@ class DepthPatch implements Comparator<DepthPatch>{
         this._col = col;
     }
 
-    public int getRow(){
+    int getRow(){
         return this._row;
     }
 
@@ -55,7 +54,7 @@ class DepthPatch implements Comparator<DepthPatch>{
     }
 
     // getting depth patch
-    public Mat getDepthPatch(){
+    Mat getDepthPatch(){
         return this._dp;
     }
 

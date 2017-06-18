@@ -20,14 +20,14 @@ import java.util.Date;
 
 class CameraImage {
 
+    private static final String TAG = "CameraImage";
+
     private String mCurrentPhotoPath;
     private Context context;
 
     CameraImage(Context context) {
         this.context = context;
     }
-
-
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -55,19 +55,16 @@ class CameraImage {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Log.i("MainActivity","Error occurred while creating the File");
+                Log.i(TAG, "Error occurred while creating the File");
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this.context, this.context.getApplicationContext().getPackageName() + ".provider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 ((Activity)this.context).startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-
             }
         }
     }
-
-
 
     Bitmap setPic(ImageView mImageView) {
         // Get the dimensions of the View
@@ -95,14 +92,11 @@ class CameraImage {
 
     Bitmap rotateImage(Bitmap bitmapOrg){
         Matrix matrix = new Matrix();
-
         matrix.postRotate(90);
 
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmapOrg,bitmapOrg.getWidth(),bitmapOrg.getHeight(),true);
 
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
-        return rotatedBitmap;
+        return Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
     }
 }
 

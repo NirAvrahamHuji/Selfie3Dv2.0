@@ -14,7 +14,6 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Size;
@@ -42,17 +41,19 @@ import static org.opencv.imgproc.Imgproc.getStructuringElement;
 
 public class LogicActivity extends AppCompatActivity {
 
+    private static final String TAG = "LogicActivity";
     public static final Double MAX_FLOAT_NUM = Double.POSITIVE_INFINITY;
-    private ImageView imgView;
 
+    private ImageView imgView;
     private inputHandler inputHandler;
     private Mat imgMat;
     DatabaseAccess databaseAccess;
     ArrayList<DepthPatch> depth_patches;
     Bitmap depthBmp;
     Bitmap orgBmp;
-    int i = 0;
+
     Mat depth;
+
 
     //A ProgressDialog object
     private ProgressDialog progressDialog;
@@ -74,9 +75,6 @@ public class LogicActivity extends AppCompatActivity {
 
         //Initialize a LoadViewTask object and call the execute() method
         new LoadViewTask().execute();
-
-
-
     }
 
     //To use the AsyncTask, it must be subclassed
@@ -108,9 +106,6 @@ public class LogicActivity extends AppCompatActivity {
 
             //Get the current thread's token
             synchronized (this) {
-//        InputStream stream = getResources().openRawResource( R.raw.face );
-//        orgBmp = BitmapFactory.decodeStream(stream);
-
                 imgMat = getMatFromBitmap(orgBmp);
 
                 inputHandler = new inputHandler();
@@ -161,8 +156,8 @@ public class LogicActivity extends AppCompatActivity {
         Imgproc.pyrMeanShiftFiltering(depth, depth, 4, 4);
         Imgproc.cvtColor(depth, depth, Imgproc.COLOR_BGR2GRAY);
 
-        Bitmap depthbmp = Utils2D.mat2bmp(depth);
-        imgView.setImageBitmap(depthbmp);
+        Bitmap depthBmp = Utils2D.mat2bmp(depth);
+        imgView.setImageBitmap(depthBmp);
     }
 
     public void close(View view) {
@@ -189,17 +184,14 @@ public class LogicActivity extends AppCompatActivity {
 
         int i = 0;
         //run on all the patches
-        for (Map.Entry<Integer, HashMap<Integer, Mat>> col2hashmap : img_descriptors.entrySet()) {
-            for (Map.Entry<Integer, Mat> row2descriptor : col2hashmap.getValue().entrySet()) {
+        for (Map.Entry<Integer, HashMap<Integer, Mat>> col2HashMap : img_descriptors.entrySet()) {
+            for (Map.Entry<Integer, Mat> row2descriptor : col2HashMap.getValue().entrySet()) {
                 Mat input_descriptor = row2descriptor.getValue();
-                Integer input_col = col2hashmap.getKey();
+                Integer input_col = col2HashMap.getKey();
                 Integer input_row = row2descriptor.getKey();
 
                 // send the col, row to get all the descriptors in the environment
                 List<Descriptor> env_descs = getPatchEnvDescs(input_col, input_row);
-
-                double min_dist = MAX_FLOAT_NUM;
-                Descriptor min_desc = new Descriptor();
 
                 Map<Descriptor, Double> k_nearest = new HashMap<>();
 
@@ -241,10 +233,10 @@ public class LogicActivity extends AppCompatActivity {
                 // create the final depth patch
                 DepthPatch res_dp = new DepthPatch(-1, input_col, input_row, avg);
                 dps.add(res_dp);
-                Log.i("Queries", String.format("done processing %d queries", ++i));
+                Log.i(TAG, String.format("done processing %d queries", ++i));
             }
         }
-        Log.i("Queries", "done processing all the queries");
+        Log.i(TAG, "done processing all the queries");
 
         return dps;
     }
@@ -270,9 +262,8 @@ public class LogicActivity extends AppCompatActivity {
 
     private DepthPatch getDepthPatch(int id, int col, int row) {
         String query = String.format("select * from depth_patches where id == %d and col == %d and row == %d;", id, col, row);
-        DepthPatch query_res = databaseAccess.exeDepthPatchesQuery(query);
 
-        return query_res;
+        return databaseAccess.exeDepthPatchesQuery(query);
     }
 
     private List<Descriptor> getPatchEnvDescs(Integer col, Integer row) {
@@ -283,9 +274,8 @@ public class LogicActivity extends AppCompatActivity {
         Integer lower_row = row - Settings.ENV_SIZE;
 
         String query = String.format("select * from descriptors where col >= %d and col < %d and row >= %d and row < %d;", lower_col, upper_col, lower_row, upper_row);
-        List<Descriptor> query_res = databaseAccess.exeDescriptorsQuery(query);
 
-        return query_res;
+        return databaseAccess.exeDescriptorsQuery(query);
     }
 
     private Mat getMatFromBitmap(Bitmap bmp){
@@ -336,6 +326,6 @@ public class LogicActivity extends AppCompatActivity {
         }
 
         Imgproc.warpAffine(depth,depth,matObject,Settings.IMAGE_SIZE);
-        System.out.println("FINISHED");
+        Log.i(TAG, "FINISHED");
     }
 }

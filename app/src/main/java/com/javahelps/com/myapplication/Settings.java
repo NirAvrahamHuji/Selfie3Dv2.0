@@ -22,9 +22,6 @@ class Settings {
     static final float PATCH_SIZE_FLOAT = 32f;
     static final int PATCH_SIZE = (int) PATCH_SIZE_FLOAT;
 
-    static int CROP_WIDTH;
-    static int CROP_HEIGHT;
-
     // the input image original sizes
     static int INPUT_IMG_WIDTH;
     static int INPUT_IMG_HEIGHT;
@@ -34,21 +31,16 @@ class Settings {
     static float FACE_INPUT_IMG_HEIGHT;
 
     static final Size IMAGE_SIZE = new Size(WIDTH_SIZE, HEIGHT_SIZE);
-    // TODO: when we retrieve the overlap return to < instead of <=
     private static final int STEP_OVERLAP = 1;
     static final int OVERLAP_SIZE = PATCH_SIZE / STEP_OVERLAP;
 
-    static final int QUERIES  = 64;
     static final int DESCRIPTOR_WANTED_SIZE = 128;
     static final int K_NEAREST = 1;
 
     static int X_NOSE = 0;
     static int Y_NOSE = 0;
-    static float SCALE_X = 0.0f;
-    static float SCALE_Y = 0.0f;
 
     // Face Align
-
     static final double sideOffset  = 0.3;
     static final double upOffset  = 0;
     static final double downOffset  = 0.2;

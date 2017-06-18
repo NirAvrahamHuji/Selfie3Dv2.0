@@ -12,7 +12,7 @@ class DepthConstructor {
 
     private ArrayList<DepthPatch> _patches;
 
-    DepthConstructor(ArrayList patches) {
+    DepthConstructor(ArrayList<DepthPatch> patches) {
         _patches = patches;
     }
 
@@ -43,7 +43,6 @@ class DepthConstructor {
                     .rowRange(dp.getRow(), (dp.getRow() + Settings.PATCH_SIZE));
 
             Core.add(sMat, dp.getDepthPatch(), sMat);
-
             Core.add(sMatDenom, new Scalar(1), sMatDenom);
         }
 

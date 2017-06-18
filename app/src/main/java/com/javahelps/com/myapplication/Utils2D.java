@@ -10,6 +10,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 class Utils2D {
+    private static final String TAG = "Utils2D";
 
     static Bitmap mat2bmp(Mat m) {
         Bitmap bmp = null;
@@ -21,7 +22,7 @@ class Utils2D {
             org.opencv.android.Utils.matToBitmap(tmp, bmp);
         }
         catch (CvException e){
-            Log.d("Exception",e.getMessage());
+            Log.e(TAG,e.getMessage());
         }
 
         return bmp;
@@ -35,7 +36,7 @@ class Utils2D {
             Utils.matToBitmap(m, bmp);
         }
         catch (CvException e){
-            Log.d("Exception",e.getMessage());
+            Log.e(TAG,e.getMessage());
         }
 
         return bmp;

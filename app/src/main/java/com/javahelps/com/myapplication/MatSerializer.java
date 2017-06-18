@@ -4,18 +4,16 @@ package com.javahelps.com.myapplication;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
-import org.opencv.core.Size;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MatSerializer {
+class MatSerializer {
 
     private static final int WIDTH = Settings.PATCH_SIZE;
     private static final int HEIGHT = Settings.PATCH_SIZE;
 
-    public static Mat string2Mat(String matStr, Boolean isDesc) {
+    static Mat string2Mat(String matStr, Boolean isDesc) {
         Mat res_dp;
         res_dp = isDesc ? new Mat( 1,Settings.DESCRIPTOR_WANTED_SIZE, CvType.CV_32F):new Mat(Settings.PATCH_SIZE, Settings.PATCH_SIZE, Settings.IMAGE_CVTYPE);
 

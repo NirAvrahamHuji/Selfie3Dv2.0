@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
 
 class VertexJack {
 
+    private static final String TAG = "VertexJack";
+
     static final int COLORS_ARRAY_SIZE =29000;
     private static final int VERTICES_SIZE = COLORS_ARRAY_SIZE * 12;
     private static final float X_CHANGE = -1.51f;
@@ -91,7 +93,7 @@ class VertexJack {
 
         }
 
-        Log.d("DOTS",String.format("x: %f y: %f z: %f",x_avg/300,y_avg/403,z_avg));
+        Log.d(TAG, String.format("Dots: x: %f y: %f z: %f",x_avg / 300, y_avg / 403, z_avg));
         return vertices;
     }
 
@@ -108,9 +110,9 @@ class VertexJack {
         }
     }
 
-    float x_avg = 0;
-    float y_avg = 0;
-    float z_avg = 0;
+    private float x_avg = 0;
+    private float y_avg = 0;
+    private float z_avg = 0;
 
     private void assignDotsValue(int row, int col, float[] vertices, int i) {
         vertices[i] = ((float)col - 150+ X_CHANGE)/300;

@@ -2,16 +2,10 @@ package com.javahelps.com.myapplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -35,11 +29,9 @@ class Cube {
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder()); // Use native byte order
         vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
-        vertexBuffer.put(this.vertices);         // Copy data into buffer
+        vertexBuffer.put(this.vertices);    // Copy data into buffer
         vertexBuffer.position(0);           // Rewind
     }
-
-
 
     // Draw the shape
     void draw(GL10 gl) {

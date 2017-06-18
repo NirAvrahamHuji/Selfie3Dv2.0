@@ -12,10 +12,8 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.HashMap;
 
-import static android.content.ContentValues.TAG;
-
 class inputHandler {
-
+    private static final String TAG = "inputHandler";
 
     HashMap<Integer, HashMap<Integer, Mat>> splitToPatches(Mat imgMat) {
         // crate a matrix for the SIFT descriptors
@@ -33,12 +31,10 @@ class inputHandler {
         HashMap<Integer, HashMap<Integer, Mat>> img_descriptors = new HashMap<>();
 
         // run on the img and compute the SIFT descriptor for each patch
-        // TODO: when overlap return to < instead of <=
         for (int col = 0; col <= (forSIFTim.cols() - Settings.OVERLAP_SIZE); col += Settings.OVERLAP_SIZE) {
             // create the inner hash map
             HashMap<Integer, Mat> descriptors_inner_map = new HashMap<>();
 
-            // TODO: when overlap return to < instead of <=
             for (int row = 0; row <= (forSIFTim.rows() - Settings.OVERLAP_SIZE); row += Settings.OVERLAP_SIZE) {
                 // take the whole mat as the patch and just choose
                 Mat patch = forSIFTim;
@@ -72,7 +68,7 @@ class inputHandler {
 
         if (patch_descriptor.cols() != Settings.DESCRIPTOR_WANTED_SIZE) {
 
-            Log.i("Compute Descriptor", String.format("patch_descriptor size is %d", patch_descriptor.cols()));
+            Log.i(TAG, String.format("patch_descriptor size is %d", patch_descriptor.cols()));
         }
 
         return patch_descriptor;
