@@ -1,9 +1,13 @@
 package com.javahelps.com.myapplication;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.*;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -57,13 +61,55 @@ public class MainActivity extends AppCompatActivity {
     ImageButton rotateButton;
     Boolean imageChosen = false;
 
+    final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 2;
+    final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 3;
+    final int MY_PERMISSIONS_CAMERA = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
         setContentView(R.layout.activity_main);
         mImageView = (ImageView) findViewById(R.id.image);
         rotateButton = (ImageButton) findViewById(R.id.rotate);
         cam_img = new CameraImage(this);
+
+    }
+
+    private void checkPermission(String permission, int result)
+    {
+        if (ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{permission}, result);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
+            {
+                checkPermission(Manifest.permission.CAMERA, MY_PERMISSIONS_CAMERA);
+                return;
+            }
+
+            case MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE:
+            {
+                return;
+            }
+
+            case MY_PERMISSIONS_CAMERA:
+            {
+                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+                return;
+            }
+
+        }
     }
 
     @Override
