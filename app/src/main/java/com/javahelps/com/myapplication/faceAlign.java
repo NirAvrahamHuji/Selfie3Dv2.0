@@ -20,7 +20,7 @@ class faceAlign {
         this.srcNoseShift = srcNoseShift;
     }
 
-    public Mat processImage() {
+    Mat processImage() {
 
         Mat dstImg = Mat.zeros(Settings.ORIG_WIDTH_SIZE, Settings.ORIG_HEIGHT_SIZE, Settings.IMAGE_CVTYPE_RGB);
 
@@ -39,10 +39,10 @@ class faceAlign {
         Double y2d = srcRect.y + srcRect.height * (1 + Settings.downOffset);
 
         int x1 = x1d.intValue();
-        int x2 = x2d.intValue();
+        int x2 = Math.min(x2d.intValue(), srcImg.width());
 
         int y1 = y1d.intValue();
-        int y2 = y2d.intValue();
+        int y2 = Math.min(y2d.intValue(), srcImg.height());
 
         Double trgtWidth = Settings.trgtRect.width * (1 + 2 * Settings.sideOffset);
         Double trgtHeight = Settings.trgtRect.height * (1 + Settings.upOffset + Settings.downOffset);
